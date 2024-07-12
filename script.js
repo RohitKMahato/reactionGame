@@ -19,6 +19,15 @@ document.addEventListener("DOMContentLoaded", function() {
         reactionTimes = [];
         alphabetDisplay.textContent = "";
 
+        // Create an input element and append it to the DOM for mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            const inputElement = document.createElement('input');
+            inputElement.type = 'text';
+            inputElement.style.opacity = '0'; // Hide the input element visually
+            document.body.appendChild(inputElement);
+            inputElement.focus();
+        }
+
         setTimeout(() => {
             alphabetDisplay.textContent = getRandomAlphabet();
             startTime = new Date().getTime();
@@ -35,10 +44,10 @@ document.addEventListener("DOMContentLoaded", function() {
             reactionTimes.push(reactionTime);
 
             if (reactionTimes.length >= maxTrials) {
-                const totalReactionTime = reactionTimes.reduce((a, b) => a + b, 0) ;
+                const totalReactionTime = reactionTimes.reduce((a, b) => a + b, 0);
                 const averageReactionTime = totalReactionTime / reactionTimes.length;
                 averageTimeDisplay.textContent = Math.round(averageReactionTime);
-                totalTimeDisplay.textContent = totalReactionTime.toFixed(1) / 1000 + " seconds"; // Display total time with "ms" suffix
+                totalTimeDisplay.textContent = (totalReactionTime / 1000).toFixed(1) + " seconds"; // Convert milliseconds to seconds
                 message.textContent = "Game over. Well done!";
                 startButton.disabled = false;
             } else {
@@ -48,10 +57,21 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
+        // Remove input element for mobile if it was created
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            const inputElement = document.querySelector('input[type="text"]');
+            if (inputElement) {
+                inputElement.parentNode.removeChild(inputElement);
+            }
+        }
+
         startButton.disabled = false;
     }
 
+    // Start game on button click for both desktop and mobile
     startButton.addEventListener("click", startGame);
+
+    // Handle key events for desktop and mobile
     document.addEventListener("keydown", function(event) {
         if (alphabetDisplay.textContent && /^[A-Z]$/.test(event.key.toUpperCase())) {
             if (event.key.toUpperCase() === alphabetDisplay.textContent) {
@@ -60,5 +80,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 endGame(true);
             }
         }
+    });
+
+    // Handle touch events for mobile
+    alphabetDisplay.addEventListener("touchstart", function() {
+        if (alphabetDisplay.textContent) {
+            endGame();
+        }
+    });
+
+    // Prevent default behavior for touch events to avoid double taps
+    alphabetDisplay.addEventListener("touchmove", function(event) {
+        event.preventDefault();
     });
 });
