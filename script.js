@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const totalTimeDisplay = document.getElementById("total-time");
 
     let startTime, endTime, reactionTimes = [];
-    const maxTrials = 5;
+    const maxTrials = 20;
 
     function getRandomAlphabet() {
         const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
