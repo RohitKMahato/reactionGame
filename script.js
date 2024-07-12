@@ -4,28 +4,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const startButton = document.getElementById("start-button");
     const averageTimeDisplay = document.getElementById("average-time");
     const totalTimeDisplay = document.getElementById("total-time");
-    const stopwatchDisplay = document.getElementById("stopwatch");
 
     let startTime, endTime, reactionTimes = [];
-    const maxTrials = 10;
-    let stopwatchInterval, gameStartTime;
+    const maxTrials = 5;
 
     function getRandomAlphabet() {
         const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         return alphabets[Math.floor(Math.random() * alphabets.length)];
-    }
-
-    function startStopwatch() {
-        gameStartTime = new Date().getTime();
-        stopwatchInterval = setInterval(() => {
-            const currentTime = new Date().getTime();
-            const elapsedTime = (currentTime - gameStartTime) / 1000;
-            stopwatchDisplay.textContent = elapsedTime.toFixed(1);
-        }, 100);
-    }
-
-    function stopStopwatch() {
-        clearInterval(stopwatchInterval);
     }
 
     function startGame() {
@@ -38,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function() {
             alphabetDisplay.textContent = getRandomAlphabet();
             startTime = new Date().getTime();
             message.textContent = "";
-            startStopwatch();
         }, 3000);
     }
 
@@ -51,22 +35,20 @@ document.addEventListener("DOMContentLoaded", function() {
             reactionTimes.push(reactionTime);
 
             if (reactionTimes.length >= maxTrials) {
-                const totalReactionTime = reactionTimes.reduce((a, b) => a + b, 0);
+                const totalReactionTime = reactionTimes.reduce((a, b) => a + b, 0) ;
                 const averageReactionTime = totalReactionTime / reactionTimes.length;
                 averageTimeDisplay.textContent = Math.round(averageReactionTime);
-                totalTimeDisplay.textContent = totalReactionTime;
-                stopStopwatch();
+                totalTimeDisplay.textContent = totalReactionTime.toFixed(1) / 1000 + " seconds"; // Display total time with "ms" suffix
+                message.textContent = "Game over. Well done!";
                 startButton.disabled = false;
             } else {
                 alphabetDisplay.textContent = getRandomAlphabet();
                 startTime = new Date().getTime();
+                return; // Return early to avoid enabling the start button
             }
         }
 
-        if (wrongInput || reactionTimes.length >= maxTrials) {
-            startButton.disabled = false;
-            stopStopwatch();
-        }
+        startButton.disabled = false;
     }
 
     startButton.addEventListener("click", startGame);
